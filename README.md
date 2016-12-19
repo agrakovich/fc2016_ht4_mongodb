@@ -12,7 +12,9 @@ Hometask:
 5) Replication for DB above (point 4).
 
 # Point 1
-
+```
+mongodump --archive=articles.gz --gzip --db articles
+```
 # Point 2
 
 # Point 3
@@ -52,3 +54,37 @@ db.grades.aggregate([
 ```
 
 # Point 5
+
+Make directories for our databases
+```
+mkdir /Users/UserName/db1
+mkdir /Users/UserName/db2
+mkdir /Users/UserName/db3
+```
+
+First member
+```
+mongod --dbpath /Users/Username/db1 --port 27017 --replSet mainReplicaSet
+```
+Second member
+```
+mongod --dbpath /Users/Username/db2 --port 27018 --replSet mainReplicaSet
+```
+Third member
+```
+mongod --dbpath /Users/Username/db3 --port 27019 --replSet mainReplicaSet
+```
+
+Set Primary server, and start it
+```
+mongo --port 27017
+rs.initiate()
+rsconf={"_id":"mainReplicaSet","members":[{"_id":0,host:"localhost:27017"}]}
+rs.reconfig(rsconf)
+```
+
+Add secondaries
+```
+rs.add("localhost:27018")
+rs.add("localhost:27019")
+```
